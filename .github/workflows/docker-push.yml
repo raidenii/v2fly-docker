@@ -37,10 +37,8 @@ jobs:
             echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Determine whether to push to DockerHub
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "PUSH=true" >> $GITHUB_ENV
+      - name: Set pushing to Docker Hub to true
+        run: echo "PUSH=true" >> $GITHUB_ENV
 
       - name: Prepare environment variables
         id: prepare
@@ -48,7 +46,6 @@ jobs:
           echo "docker_platforms=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
           echo "docker_image=r2dh/v2fly-core" >> $GITHUB_OUTPUT
           echo "docker_tag=${{ steps.tag.outputs.tag }}" >> $GITHUB_OUTPUT
-          echo "docker_is_push=${PUSH:-false}" >> $GITHUB_OUTPUT
 
       - name: Build tag & latest release
         run: |
