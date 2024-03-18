@@ -28,7 +28,7 @@ jobs:
       - name: Get tag to build
         id: tag
         run: |
-          latest_tag=$(curl -sSL --retry 5 "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | jq -r ".tag_name")
+          latest_tag=$(curl -sSL --retry 5 https://api.github.com/repos/v2fly/v2ray-core/releases | jq -r '.[0] | .tag_name')
           if [[ -z "${{ github.event.inputs.tag }}" ]]; then
             echo "Use the latest release tag of v2ray-core: ${latest_tag}"
             echo "tag=${latest_tag}" >> $GITHUB_OUTPUT
