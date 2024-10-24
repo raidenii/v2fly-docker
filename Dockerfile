@@ -1,18 +1,31 @@
-FROM alpine:latest
-LABEL maintainer="r2dh"
+FROM golang:alpine AS build
 
 WORKDIR /tmp
-ARG TARGETPLATFORM
+
 ARG TAG
-COPY start.sh setup.sh ./
 
-RUN set -ex \
-    && apk add --no-cache ca-certificates su-exec \
-    && mkdir -p /etc/v2ray /usr/local/share/v2ray /var/log/v2ray \
-    # forward request and error logs to docker log collector
-    && ln -sf /dev/stdout /var/log/v2ray/access.log \
-    && ln -sf /dev/stderr /var/log/v2ray/error.log \
-    && chmod +x ./setup.sh \
-    && ./setup.sh "${TARGETPLATFORM}" "${TAG}"
+RUN apk add --no-cache ca-certificates git
 
-ENTRYPOINT ["/usr/local/bin/start.sh"]
+RUN [[ -z ${TAG} ]] && TAG=$(git ls-remote --tags --sort='-v:refname' https://github.com/v2fly/v2ray-core | head -n1 | cut -d/ -f3); \
+    git clone -c advice.detachedHead=false --branch ${TAG} \
+    --single-branch https://github.com/v2fly/v2ray-core src/v2ray-core \
+    && cd src/v2ray-core \
+    && go mod download \
+    && CGO_ENABLED=0 go build -o /tmp/bin/v2ray -trimpath -ldflags "-s -w -buildid=" ./main \
+    && chmod +x /tmp/bin/v2ray
+
+RUN mkdir -p ./etc \
+    && echo "v2ray:x:7000:7000::/nonexistent:/sbin/nologin" >> ./etc/passwd \
+    && echo "v2ray:!:::::::" >> ./etc/shadow \
+    && echo "v2ray:x:7000:" >> ./etc/group \
+    && echo "v2ray:!::" >> ./etc/groupshadow
+
+FROM scratch AS final
+LABEL maintainer="r2dh"
+
+COPY --from=build /tmp/etc/* /etc/
+COPY --from=build --chown=v2ray /tmp/bin/v2ray /bin/v2ray
+
+USER v2ray
+
+ENTRYPOINT ["/bin/v2ray"]
