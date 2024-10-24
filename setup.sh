@@ -10,7 +10,7 @@ else
         linux/amd64)
             ARCH="64"
             ;;
-        linux/arm64|linux/arm64/v8)
+        linux/arm64)
             ARCH="arm64-v8a"
             ;;
         *)
