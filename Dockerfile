@@ -6,8 +6,7 @@ ARG TAG
 
 RUN apk add --no-cache ca-certificates git
 
-RUN [[ -z ${TAG} ]] && TAG=$(git ls-remote --tags --sort='-v:refname' https://github.com/v2fly/v2ray-core | head -n1 | cut -d/ -f3); \
-    git clone -c advice.detachedHead=false --branch ${TAG} \
+RUN git clone -c advice.detachedHead=false --branch ${TAG} \
     --single-branch https://github.com/v2fly/v2ray-core src/v2ray-core \
     && cd src/v2ray-core \
     && go mod download \
