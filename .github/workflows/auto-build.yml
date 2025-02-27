@@ -13,7 +13,7 @@ jobs:
       - name: Compare Docker image version with v2fly release's
         id: version-check-result
         run: |
-          v2fly_release=$(curl -sSL --retry 5 https://api.github.com/repos/v2fly/v2ray-core/releases | jq -r '.[0] | .tag_name')
+          v2fly_release=$(curl -sSL --retry 5 https://api.github.com/repos/v2fly/v2ray-core/releases/latest | jq -r ".tag_name")
           docker_tag=$(curl -sSL --retry 5 https://hub.docker.com/v2/repositories/r2dh/v2fly-core/tags | jq -r ".results[1].name")
           ret=1
           if [[ $v2fly_release != $docker_tag ]] && [[ $(printf '%s\n' $v2fly_release $docker_tag | sort -V | head -n1) == $docker_tag ]]; then ret=0; fi
