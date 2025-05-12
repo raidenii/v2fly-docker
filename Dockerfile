@@ -10,7 +10,7 @@ RUN git clone -c advice.detachedHead=false --branch ${TAG} \
     --single-branch https://github.com/v2fly/v2ray-core src/v2ray-core \
     && cd src/v2ray-core \
     && go mod download \
-    && CGO_ENABLED=0 go build -o /tmp/bin/v2ray -trimpath -ldflags "-s -w -buildid=" ./main \
+    && CGO_ENABLED=0 go build -o /tmp/bin/v2ray -trimpath -ldflags "-s -w -buildid=" -buildmode=pie ./main \
     && chmod +x /tmp/bin/v2ray
 
 RUN mkdir -p ./etc \
