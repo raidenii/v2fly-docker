@@ -16,7 +16,7 @@ RUN mkdir -p ./etc \
     && echo "v2ray:x:7000:7000::/nonexistent:/sbin/nologin" >> ./etc/passwd \
     && echo "v2ray:!:::::::" >> ./etc/shadow \
     && echo "v2ray:x:7000:" >> ./etc/group \
-    && echo "v2ray:!::" >> ./etc/groupshadow
+    && echo "v2ray:!::" >> ./etc/groupshadow \
     && chmod 400 /etc/shadow /etc/groupshadow
 
 FROM scratch AS final
