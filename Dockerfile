@@ -12,7 +12,7 @@ RUN git clone -c advice.detachedHead=false --branch ${TAG} \
     && go mod download \
     && CGO_ENABLED=0 GOOS=linux go build -o /tmp/bin/v2ray \
        -trimpath -ldflags "-s -w -buildid=" ./main \
-    && upx --best --lzma /tmp/bin/v2ray
+    && upx --ultra-brute --lzma /tmp/bin/v2ray
 
 RUN mkdir -p ./etc \
     && echo "v2ray:x:7000:7000::/nonexistent:/sbin/nologin" >> ./etc/passwd \
