@@ -10,7 +10,8 @@ RUN git clone -c advice.detachedHead=false --branch ${TAG} \
     --single-branch https://github.com/v2fly/v2ray-core src/v2ray-core \
     && cd src/v2ray-core \
     && go mod download \
-    && go build -o /tmp/bin/v2ray -trimpath -ldflags "-s -w -buildid=" ./main \
+    && CGO_ENABLED=0 GOOS=linux go build -o /tmp/bin/v2ray \
+       -trimpath -ldflags "-s -w -buildid=" ./main \
     && upx --best --lzma /tmp/bin/v2ray
 
 RUN mkdir -p ./etc \
